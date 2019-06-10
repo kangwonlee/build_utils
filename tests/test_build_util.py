@@ -47,17 +47,23 @@ def test_ipython_with_build_util(ipython_with_build_util):
     # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
     ip = ipython_with_build_util
 
-    line = ''
+    line = 'temp'
+
+    msg = 'Hello World!'
     cell = ('#include <iostream>\n'
         'int main(int argn, char* argv[])\n'
         '{\n'
-      '''    std::cout << "Hello World!" << '\n';\n'''
+     f'''    std::cout << "{msg}" << '\\n';\n'''
         '    return 0;\n'
         '}\n')
 
-    result = ip.run_cell_magic('cpp', line, cell)
+    result_str = ip.run_cell_magic('cpp', line, cell)
 
-    assert (line, cell) == result, result
+    assert result_str.strip() == msg, result_str
+
+    # clean up
+    if os.path.exists(line + '.s'):
+        os.remove(line + '.s')
 
 
 if "__main__" == __name__:
