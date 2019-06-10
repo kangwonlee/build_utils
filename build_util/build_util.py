@@ -28,18 +28,7 @@ class CppMagic(IPython.core.magic.Magics):
     def cpp(self, line, cell):
         # https://ipython.readthedocs.io/en/stable/config/custommagics.html#defining-custom-magics
 
-        if not line:
-            line = 'temp.cpp'
-
-        filename = os.path.abspath(line.strip().split()[0])
-
-        basename, ext = os.path.splitext(filename)
-
-        if not ext:
-            ext = '.cpp'
-            filename = ''.join((basename, ext))
-        elif ext not in ('.cpp', '.c'):
-            raise NotImplementedError
+        filename = self.get_filename(line)
 
         code = cell.strip()
 
@@ -64,6 +53,22 @@ class CppMagic(IPython.core.magic.Magics):
         result = '\n'.join(result_list)
 
         return result
+
+    @staticmethod
+    def get_filename(line):
+        if not line:
+            line = 'temp.cpp'
+
+        filename = os.path.abspath(line.strip().split()[0])
+
+        basename, ext = os.path.splitext(filename)
+
+        if not ext:
+            ext = '.cpp'
+            filename = ''.join((basename, ext))
+        elif ext not in ('.cpp', '.c'):
+            raise NotImplementedError
+        return filename
 
 
 def write_file(filename, code):
