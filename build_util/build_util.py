@@ -2,14 +2,17 @@
 import os
 import subprocess
 import sys
+import tempfile
 
 import IPython
+import IPython.core.magic
 import IPython.display as disp
-
 
 # obtain ipython
 try:
+
     ipython = IPython.get_ipython()
+
 except AttributeError:
     try:
         import IPython.core.ipapi
@@ -17,6 +20,65 @@ except AttributeError:
     except ModuleNotFoundError:
         import IPython.ipapi
         ipython = IPython.ipapi.get()
+
+
+@IPython.core.magic.magics_class
+class CppMagic(IPython.core.magic.Magics):
+    @IPython.core.magic.cell_magic
+    def cpp(self, line, cell):
+        # https://ipython.readthedocs.io/en/stable/config/custommagics.html#defining-custom-magics
+
+        filename = self.get_filename(line)
+
+        code = cell.strip()
+
+        with open(filename, 'wt', encoding='utf-8') as f:
+            f.write(code)
+
+        build_result = build_cpp(filename)
+
+        if build_result.returncode:
+            result = self.get_stdout_stderr(build_result)
+
+        else:
+            run_result = run(filename)
+            run_result.check_returncode()
+
+            result = self.get_stdout_stderr(run_result)
+
+        cleanup(filename)
+
+        return result
+
+    @staticmethod
+    def get_stdout_stderr(run_result):
+        result_list = []
+
+        if run_result.stdout:
+            result_list.append(run_result.stdout.decode())
+
+        if run_result.stderr:
+            result_list.append(run_result.stderr.decode())
+
+        result = '=====\n'.join(result_list)
+
+        return result
+
+    @staticmethod
+    def get_filename(line):
+        if not line:
+            line = tempfile.gettempprefix() + '.cpp'
+
+        filename = os.path.abspath(line.strip().split()[0])
+
+        basename, ext = os.path.splitext(filename)
+
+        if not ext:
+            ext = '.cpp'
+            filename = ''.join((basename, ext))
+        elif ext not in ('.cpp', '.c'):
+            raise NotImplementedError
+        return filename
 
 
 def write_file(filename, code):
@@ -45,27 +107,28 @@ def build_cpp(filename):
 
     if sys.platform.lower().startswith('linux'):
         # build command for Linux
-        subprocess.run([
+        r = subprocess.run([
             'g++', '-Wall', '-g', '-std=c++14', filename,
             '-o', os.path.join(os.curdir, basename), # output file name
             f'-Wa,-adhln={basename}.s',
             ],
-            check=True,
+            check=False,
+            capture_output=True,
         )
     else:
         # Otherwise
-        subprocess.run([
+        r = subprocess.run([
             'g++', '-Wall', '-g', '-std=c++14', filename,
-            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'),
-            ],
-            check=True,
-        )
-        subprocess.run([
+            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'), '&&',
             'g++', '-Wall', '-g', '-std=c++14', filename,
             '-o',  os.path.join(os.curdir, f'{basename}'),
             ],
-            check=True,
+            check=False,
+            capture_output=True,
+            shell=True,
         )
+
+    return r
 
 
 def run(cpp_filename):
@@ -83,8 +146,9 @@ def run(cpp_filename):
             stdout=subprocess.PIPE,
             check=True,
     )
+
     # present output
-    print(result.stdout.decode())
+    return result
 
 
 def cleanup(cpp_filename):
@@ -126,4 +190,3 @@ def run_markdown(cpp_filename):
     )
     # present output as a markdown
     disp.display(disp.Markdown(result.stdout.decode()))
-
