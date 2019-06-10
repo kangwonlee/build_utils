@@ -36,21 +36,31 @@ class CppMagic(IPython.core.magic.Magics):
             f.write(code)
 
         build_result = build_cpp(filename)
-        build_result.check_returncode()
 
-        run_result = run(filename)
-        run_result.check_returncode()
+        if build_result.returncode:
+            result = self.get_stdout_stderr(build_result)
+
+        else:
+            run_result = run(filename)
+            run_result.check_returncode()
+
+            result = self.get_stdout_stderr(run_result)
 
         cleanup(filename)
 
+        return result
+
+    @staticmethod
+    def get_stdout_stderr(run_result):
         result_list = []
+
         if run_result.stdout:
             result_list.append(run_result.stdout.decode())
-        
+
         if run_result.stderr:
             result_list.append(run_result.stderr.decode())
 
-        result = '\n'.join(result_list)
+        result = '=====\n'.join(result_list)
 
         return result
 
@@ -102,7 +112,8 @@ def build_cpp(filename):
             '-o', os.path.join(os.curdir, basename), # output file name
             f'-Wa,-adhln={basename}.s',
             ],
-            check=True,
+            check=False,
+            capture_output=True,
         )
     else:
         # Otherwise
@@ -112,7 +123,9 @@ def build_cpp(filename):
             'g++', '-Wall', '-g', '-std=c++14', filename,
             '-o',  os.path.join(os.curdir, f'{basename}'),
             ],
-            check=True, shell=True
+            check=False,
+            capture_output=True,
+            shell=True,
         )
 
     return r
