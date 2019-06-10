@@ -4,12 +4,15 @@ import subprocess
 import sys
 
 import IPython
+import IPython.core.magic
 import IPython.display as disp
 
 
 # obtain ipython
 try:
+
     ipython = IPython.get_ipython()
+
 except AttributeError:
     try:
         import IPython.core.ipapi
@@ -17,6 +20,13 @@ except AttributeError:
     except ModuleNotFoundError:
         import IPython.ipapi
         ipython = IPython.ipapi.get()
+
+
+@IPython.core.magic.register_cell_magic
+def cpp(line, cell):
+    # https://ipython.readthedocs.io/en/stable/config/custommagics.html#defining-custom-magics
+    
+    return line, cell
 
 
 def write_file(filename, code):
@@ -126,4 +136,3 @@ def run_markdown(cpp_filename):
     )
     # present output as a markdown
     disp.display(disp.Markdown(result.stdout.decode()))
-

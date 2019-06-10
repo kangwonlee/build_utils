@@ -36,8 +36,11 @@ def ipython_with_build_util(ipython):
         'import os\n'
         'import sys\n'
         'sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(os.getcwd()))))\n'
-        'import build_util.build_util as bu\n'
     )
+
+    result = ipython.magic('load_ext build_util')
+
+    assert False, result
 
     return ipython
 
