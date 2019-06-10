@@ -27,8 +27,43 @@ class CppMagic(IPython.core.magic.Magics):
     @IPython.core.magic.cell_magic
     def cpp(self, line, cell):
         # https://ipython.readthedocs.io/en/stable/config/custommagics.html#defining-custom-magics
+
+        if not line:
+            line = 'temp.cpp'
+
+        filename = os.path.abspath(line.strip().split()[0])
+
+        basename, ext = os.path.splitext(filename)
+
+        if not ext:
+            ext = '.cpp'
+            filename = ''.join((basename, ext))
+        elif ext not in ('.cpp', '.c'):
+            raise NotImplementedError
+
+        code = cell.strip()
+
+        with open(filename, 'wt', encoding='utf-8') as f:
+            f.write(code)
+
+        build_result = build_cpp(filename)
+        build_result.check_returncode()
+
+        run_result = run(filename)
+        run_result.check_returncode()
+
+        cleanup(filename)
+
+        result_list = []
+        if run_result.stdout:
+            result_list.append(run_result.stdout.decode())
         
-        return line, cell
+        if run_result.stderr:
+            result_list.append(run_result.stderr.decode())
+
+        result = '\n'.join(result_list)
+
+        return result
 
 
 def write_file(filename, code):
@@ -57,7 +92,7 @@ def build_cpp(filename):
 
     if sys.platform.lower().startswith('linux'):
         # build command for Linux
-        subprocess.run([
+        r = subprocess.run([
             'g++', '-Wall', '-g', '-std=c++14', filename,
             '-o', os.path.join(os.curdir, basename), # output file name
             f'-Wa,-adhln={basename}.s',
@@ -66,18 +101,16 @@ def build_cpp(filename):
         )
     else:
         # Otherwise
-        subprocess.run([
+        r = subprocess.run([
             'g++', '-Wall', '-g', '-std=c++14', filename,
-            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'),
-            ],
-            check=True,
-        )
-        subprocess.run([
+            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'), '&&',
             'g++', '-Wall', '-g', '-std=c++14', filename,
             '-o',  os.path.join(os.curdir, f'{basename}'),
             ],
-            check=True,
+            check=True, shell=True
         )
+
+    return r
 
 
 def run(cpp_filename):
@@ -95,8 +128,9 @@ def run(cpp_filename):
             stdout=subprocess.PIPE,
             check=True,
     )
+
     # present output
-    print(result.stdout.decode())
+    return result
 
 
 def cleanup(cpp_filename):
