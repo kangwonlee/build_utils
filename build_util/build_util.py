@@ -2,11 +2,11 @@
 import os
 import subprocess
 import sys
+import tempfile
 
 import IPython
 import IPython.core.magic
 import IPython.display as disp
-
 
 # obtain ipython
 try:
@@ -57,7 +57,7 @@ class CppMagic(IPython.core.magic.Magics):
     @staticmethod
     def get_filename(line):
         if not line:
-            line = 'temp.cpp'
+            line = tempfile.gettempprefix() + '.cpp'
 
         filename = os.path.abspath(line.strip().split()[0])
 
