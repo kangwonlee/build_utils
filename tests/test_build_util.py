@@ -15,7 +15,7 @@ import IPython.testing.globalipapp
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def ipython():
 
     ip = IPython.testing.globalipapp.get_ipython()
@@ -29,7 +29,7 @@ def test_ipython(ipython):
     assert isinstance(ipython, IPython.terminal.interactiveshell.TerminalInteractiveShell), type(ipython)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def ipython_with_build_util(ipython):
 
     ipython.run_cell(
