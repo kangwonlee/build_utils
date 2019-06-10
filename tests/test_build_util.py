@@ -38,9 +38,7 @@ def ipython_with_build_util(ipython):
         'sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(os.getcwd()))))\n'
     )
 
-    result = ipython.magic('load_ext build_util')
-
-    assert False, result
+    ipython.magic('load_ext build_util')
 
     return ipython
 
@@ -49,11 +47,17 @@ def test_ipython_with_build_util(ipython_with_build_util):
     # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
     ip = ipython_with_build_util
 
-    result = ip.run_cell(
-        'dir()'
-    )
+    line = ''
+    cell = ('#include <iostream>\n'
+        'int main(int argn, char* argv[])\n'
+        '{\n'
+      '''    std::cout << "Hello World!" << '\n';\n'''
+        '    return 0;\n'
+        '}\n')
 
-    assert 'bu' in result.result
+    result = ip.run_cell_magic('cpp', line, cell)
+
+    assert (line, cell) == result, result
 
 
 if "__main__" == __name__:
