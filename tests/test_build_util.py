@@ -43,7 +43,7 @@ def ipython_with_build_util(ipython):
     return ipython
 
 
-def test_ipython_with_build_util(ipython_with_build_util):
+def test_ipython_with_build_util_hello_world(ipython_with_build_util):
     # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
     ip = ipython_with_build_util
 
