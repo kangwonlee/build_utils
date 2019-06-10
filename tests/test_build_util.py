@@ -7,9 +7,9 @@
     4. Run your magic with ip.run_line_magic('your_magic_function', 'your_magic_arguments')
     5. (Optional) Access results of your magic with ip.user_ns (ipython user namespace).
 """
-
 import os
 import sys
+import tempfile
 
 import IPython.testing.globalipapp
 import pytest
@@ -47,7 +47,7 @@ def test_ipython_with_build_util_hello_world(ipython_with_build_util):
     # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
     ip = ipython_with_build_util
 
-    line = 'temp'
+    line = tempfile.gettempprefix()
 
     msg = 'Hello World!'
     cell = ('#include <iostream>\n'
@@ -70,7 +70,7 @@ def test_ipython_with_build_util_hello_world_error(ipython_with_build_util):
     # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
     ip = ipython_with_build_util
 
-    line = 'temp'
+    line = tempfile.gettempprefix()
 
     msg = 'Hello World!'
     cell = ('#include <iostream>\n'
