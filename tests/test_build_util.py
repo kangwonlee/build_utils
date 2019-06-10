@@ -66,5 +66,28 @@ def test_ipython_with_build_util_hello_world(ipython_with_build_util):
         os.remove(line + '.s')
 
 
+def test_ipython_with_build_util_hello_world_error(ipython_with_build_util):
+    # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
+    ip = ipython_with_build_util
+
+    line = 'temp'
+
+    msg = 'Hello World!'
+    cell = ('#include <iostream>\n'
+        'int main(int argn, char* argv[])\n'
+        '{\n'
+     f'''    std::cout << "{msg}' << '\\n';\n'''
+        '    return 0;\n'
+        '}\n')
+
+    result_str = ip.run_cell_magic('cpp', line, cell)
+
+    assert '''error: missing terminating " character''' in result_str.strip(), result_str
+
+    # clean up
+    if os.path.exists(line + '.s'):
+        os.remove(line + '.s')
+
+
 if "__main__" == __name__:
     pytest.main()
