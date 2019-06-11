@@ -63,7 +63,7 @@ def test_ipython_with_build_util_hello_world(ipython_with_build_util):
 
     result_str = ip.run_cell_magic('cpp', line, cell)
 
-    assert result_str.strip() == msg, result_str
+    assert msg == result_str.strip(), result_str
 
     # clean up
     if os.path.exists(line + '.s'):
