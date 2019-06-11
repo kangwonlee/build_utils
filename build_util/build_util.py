@@ -96,10 +96,13 @@ def build_cpp(filename):
     """
     # Detect OS type because OSX may need different options
     # https://stackoverflow.com/questions/3466166/how-to-check-if-running-in-cygwin-mac-or-linux/18790824
-    
+
     basename, ext = os.path.splitext(filename)
+
     if not ext:
         filename += '.cpp'
+
+    assert os.path.exists(filename)
 
     # for debug purpose
     if 'CI' in os.environ:
@@ -118,14 +121,11 @@ def build_cpp(filename):
     else:
         # Otherwise
         r = subprocess.run([
-            'g++', '-Wall', '-g', '-std=c++14', filename,
-            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'), '&&',
-            'g++', '-Wall', '-g', '-std=c++14', filename,
-            '-o',  os.path.join(os.curdir, f'{basename}'),
+            'g++', '-Wall', '-g', '-std=c++14',
+            '-o',  os.path.join(os.curdir, f'{basename}'), filename,
             ],
             check=False,
             capture_output=True,
-            shell=True,
         )
 
     return r
@@ -190,3 +190,10 @@ def run_markdown(cpp_filename):
     )
     # present output as a markdown
     disp.display(disp.Markdown(result.stdout.decode()))
+
+
+def get_tempfile_name():
+    # https://stackoverflow.com/a/26541521
+    tempname = next(tempfile._get_candidate_names())
+
+    return tempname
