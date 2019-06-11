@@ -14,6 +14,12 @@ import tempfile
 import IPython.testing.globalipapp
 import pytest
 
+sys.path.insert(
+    0,
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+)
+
+import build_util.build_util as bu
 
 @pytest.fixture(scope="module")
 def ipython():
@@ -91,6 +97,14 @@ def test_ipython_with_build_util_hello_world_error(ipython_with_build_util):
     # clean up
     if os.path.exists(line + '.s'):
         os.remove(line + '.s')
+
+
+def test_get_tempfile_name():
+    result1 = bu.get_tempfile_name()
+    assert isinstance(result1, str), type(result1)
+    result2 = bu.get_tempfile_name()
+
+    assert result1 != result2
 
 
 if "__main__" == __name__:
