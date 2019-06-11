@@ -66,8 +66,8 @@ class CppMagic(IPython.core.magic.Magics):
 
     @staticmethod
     def get_filename(line):
-        if not line:
-            line = tempfile.gettempprefix() + '.cpp'
+        if not line.strip():
+            line = get_tempfile_name() + '.cpp'
 
         filename = os.path.abspath(line.strip().split()[0])
 
