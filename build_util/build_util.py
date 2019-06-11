@@ -107,28 +107,15 @@ def build_cpp(filename):
     if 'CI' in os.environ:
         print(f"sys.platform = {sys.platform}")
 
-    if sys.platform.lower().startswith('linux'):
-        # build command for Linux
-        r = subprocess.run([
-            'g++', '-Wall', '-g', '-std=c++14', filename,
-            '-o', os.path.join(os.curdir, basename), # output file name
-            f'-Wa,-adhln={basename}.s',
-            ],
-            check=False,
-            capture_output=True,
-        )
-    else:
-        # Otherwise
-        r = subprocess.run([
-            'g++', '-Wall', '-g', '-std=c++14',
-            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'), filename, '&&',
-            'g++', '-Wall', '-g', '-std=c++14',
-            '-o',  os.path.join(os.curdir, f'{basename}'), filename,
-            ],
-            check=False,
-            capture_output=True,
-            shell=True,
-        )
+    # build command for Linux
+    r = subprocess.run([
+        'g++', '-Wall', '-g', '-std=c++14', filename,
+        '-o', os.path.join(os.curdir, basename), # output file name
+        f'-Wa,-adhln={basename}.s',
+        ],
+        check=False,
+        capture_output=True,
+    )
 
     return r
 
