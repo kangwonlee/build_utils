@@ -69,7 +69,11 @@ def test_ipython_with_build_util_hello_world(ipython_with_build_util):
 
     result_str = ip.run_cell_magic('cpp', line, cell)
 
-    assert msg == result_str.strip(), result_str
+    try:
+        assert msg == result_str.strip(), result_str
+    except AssertionError as e:
+        os.system('g++ --help')
+        raise type(e)(str(e)).with_traceback(sys.exc_info()[2])
 
     # clean up
     if os.path.exists(line + '.s'):
