@@ -120,10 +120,10 @@ def build_cpp(filename):
     else:
         # Otherwise
         r = subprocess.run([
-            'g++', '-Wall', '-g', '-std=c++14', filename,
-            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'), '&&',
-            'g++', '-Wall', '-g', '-std=c++14', filename,
-            '-o',  os.path.join(os.curdir, f'{basename}'),
+            'g++', '-Wall', '-g', '-std=c++14',
+            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'), filename, '&&',
+            'g++', '-Wall', '-g', '-std=c++14',
+            '-o',  os.path.join(os.curdir, f'{basename}'), filename,
             ],
             check=False,
             capture_output=True,
