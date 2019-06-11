@@ -1,17 +1,18 @@
-language: shell
 
-os:
-  - linux
-  - osx
+language: python
 
-python:
-  - "3.7"
-  - "3.7-dev"
-  - "3.8-dev"
-  - "nightly"
+matrix:
+  include:
+    - name: "Python 3.7.1 on Xenial Linux"
+      python: 3.7           # this works for Linux but is ignored on macOS or Windows
+      dist: xenial          # required for Python >= 3.7
+    - name: "Python 3.7.2 on macOS"
+      os: osx
+      osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
+      language: shell       # 'language: python' is an error on Travis CI macOS
 
 install:
-  pip install --user -r requirements.txt
+  pip3 install --user -r requirements.txt
 
 script: 
   pytest tests/
