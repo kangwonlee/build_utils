@@ -1,5 +1,6 @@
+[![Build Status](https://travis-ci.org/kangwonlee/build_utils.svg?branch=master)](https://travis-ci.org/kangwonlee/build_utils)
+
 # Build Utilities
-Submodule of a ipynb project
 
 Build (and run) C/C++ files using iPython / Jupyter magic commands
 
