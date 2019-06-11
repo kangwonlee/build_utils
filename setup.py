@@ -9,6 +9,7 @@ setup(
    author_email='kangwon@gmail.com',
    packages=find_packages(),
    install_requires=['IPython', 'pytest'],
+   setup_requires=["pytest-runner",],
    tests_require=['pytest', 'IPython'],
    test_suite="tests",
    # https://setuptools.readthedocs.io/en/latest/setuptools.html#test-build-package-and-run-a-unittest-suite
