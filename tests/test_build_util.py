@@ -96,7 +96,10 @@ def test_ipython_with_build_util_hello_world_error(ipython_with_build_util):
 
     result_str = ip.run_cell_magic('cpp', line, cell)
 
-    assert '''error: missing terminating " character''' in result_str.strip(), result_str
+    assert any([
+        '''error: missing terminating " character''' in result_str.strip(),
+        '''warning: missing terminating \'"\' character [-Winvalid''' in result_str.strip(),
+        ]), result_str
 
     # clean up
     if os.path.exists(line + '.s'):
