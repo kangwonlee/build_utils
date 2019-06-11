@@ -97,11 +97,11 @@ def build_cpp(filename):
     # Detect OS type because OSX may need different options
     # https://stackoverflow.com/questions/3466166/how-to-check-if-running-in-cygwin-mac-or-linux/18790824
 
-    assert os.path.exists(filename)
-
     basename, ext = os.path.splitext(filename)
     if not ext:
         filename += '.cpp'
+
+    assert os.path.exists(filename)
 
     # for debug purpose
     if 'CI' in os.environ:
