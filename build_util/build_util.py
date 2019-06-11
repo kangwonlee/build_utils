@@ -192,3 +192,10 @@ def run_markdown(cpp_filename):
     )
     # present output as a markdown
     disp.display(disp.Markdown(result.stdout.decode()))
+
+
+def get_tempfile_name():
+    # https://stackoverflow.com/a/26541521
+    tempname = next(tempfile._get_candidate_names()) + '.cpp'
+
+    return tempname
