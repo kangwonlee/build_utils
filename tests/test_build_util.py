@@ -38,7 +38,11 @@ def ipython_with_build_util(ipython):
         'sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(os.getcwd()))))\n'
     )
 
-    ipython.magic('load_ext build_util')
+    try:
+        ipython.magic('load_ext build_util')
+    except ModuleNotFoundError as e:
+        # https://stackoverflow.com/a/6062799
+        raise type(e)(str(e) + f"\ncwd = {os.getcwd()}").with_traceback(sys.exc_info()[2])
 
     return ipython
 
