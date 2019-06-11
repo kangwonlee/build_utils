@@ -57,7 +57,7 @@ def test_ipython_with_build_util_hello_world(ipython_with_build_util):
     # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
     ip = ipython_with_build_util
 
-    line = tempfile.gettempprefix()
+    line = bu.get_tempfile_name()
 
     msg = 'Hello World!'
     cell = ('#include <iostream>\n'
@@ -80,7 +80,7 @@ def test_ipython_with_build_util_hello_world_error(ipython_with_build_util):
     # https://pmbaumgartner.github.io/blog/testing-ipython-magics/
     ip = ipython_with_build_util
 
-    line = tempfile.gettempprefix()
+    line = bu.get_tempfile_name()
 
     msg = 'Hello World!'
     cell = ('#include <iostream>\n'
