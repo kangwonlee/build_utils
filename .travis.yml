@@ -1,0 +1,11 @@
+language: shell
+
+os:
+  - linux
+  - osx
+
+install:
+  pip install --user -r requirements.txt
+
+script: 
+  pytest tests/
