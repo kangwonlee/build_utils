@@ -35,7 +35,7 @@ def ipython_with_build_util(ipython):
     ipython.run_cell(
         'import os\n'
         'import sys\n'
-        'sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(os.getcwd()))))\n'
+        'sys.path.insert(0, os.getcwd())\n'
     )
 
     try:
