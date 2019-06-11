@@ -98,6 +98,7 @@ def build_cpp(filename):
     # https://stackoverflow.com/questions/3466166/how-to-check-if-running-in-cygwin-mac-or-linux/18790824
 
     basename, ext = os.path.splitext(filename)
+
     if not ext:
         filename += '.cpp'
 
@@ -121,13 +122,10 @@ def build_cpp(filename):
         # Otherwise
         r = subprocess.run([
             'g++', '-Wall', '-g', '-std=c++14',
-            '-S', '-o',  os.path.join(os.curdir, f'{basename}.s'), filename, '&&',
-            'g++', '-Wall', '-g', '-std=c++14',
             '-o',  os.path.join(os.curdir, f'{basename}'), filename,
             ],
             check=False,
             capture_output=True,
-            shell=True,
         )
 
     return r
