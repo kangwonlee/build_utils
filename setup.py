@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
 
@@ -7,8 +7,9 @@ setup(
    description='Build (and run) C/C++ files using iPython / Jupyter magic commands',
    author='KangWon LEE',
    author_email='kangwon@gmail.com',
-   packages=['build_util'],
+   packages=find_packages(),
    install_requires=['IPython', 'pytest'],
-   test_suite="build_util.tests.test_all" 
+   tests_require=['pytest', 'IPython'],
+   test_suite="tests",
    # https://setuptools.readthedocs.io/en/latest/setuptools.html#test-build-package-and-run-a-unittest-suite
 )
